@@ -47,7 +47,7 @@ class MatchingService:
         Formula:
         - base_score = overlap_count (skills learner wants that candidate has)
         - breadth_bonus = min(candidate_strength_count, 10) / 10.0
-        - exp_bonus = min(candidate_years_exp, 10) / 10.0
+        - exp_bonus = min(candidate_years_exp, 10) / 10.0  (professional activities)
         - role_bonus = similarity score (0.0, 0.2, or 0.5)
         - total_score = (base_score × 2.0) + (breadth_bonus × 0.3) + 
                         (exp_bonus × 1.5) + role_bonus

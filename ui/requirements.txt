@@ -1,0 +1,11 @@
+# Streamlit Community Cloud Requirements
+# This file is for deployment - no FastAPI needed
+
+# Streamlit
+streamlit==1.30.0
+
+# MongoDB
+pymongo==4.6.1
+
+# Utilities
+python-dotenv==1.0.0
