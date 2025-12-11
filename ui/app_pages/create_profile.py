@@ -40,6 +40,10 @@ def render_create_profile_page():
     if 'create_tab' not in st.session_state:
         st.session_state.create_tab = 0
     
+    # Initialize form data storage (persists across tab navigation)
+    if 'form_data' not in st.session_state:
+        st.session_state.form_data = {}
+    
     # Tab labels
     tab_labels = ["📋 Personal Info", "💚 What I Give", "💙 What I Ask"]
     current_tab = st.session_state.create_tab
@@ -55,6 +59,27 @@ def render_create_profile_page():
     # =========================================================================
     if current_tab == 0:
         st.markdown("### Basic Information")
+        
+        # Restore values from form_data if we're returning to this tab
+        fd = st.session_state.form_data
+        if 'basic_name' not in st.session_state and 'full_name' in fd:
+            st.session_state.basic_name = fd['full_name']
+        if 'basic_email' not in st.session_state and 'email' in fd:
+            st.session_state.basic_email = fd['email']
+        if 'basic_linkedin' not in st.session_state and 'linkedin_url' in fd:
+            st.session_state.basic_linkedin = fd['linkedin_url']
+        if 'basic_phone' not in st.session_state and 'phone_number' in fd:
+            st.session_state.basic_phone = fd['phone_number']
+        if 'basic_company' not in st.session_state and 'current_company' in fd:
+            st.session_state.basic_company = fd['current_company']
+        if 'phone_country' not in st.session_state and 'country_code' in fd:
+            st.session_state.phone_country = fd['country_code']
+        if 'basic_experience' not in st.session_state and 'experience' in fd:
+            st.session_state.basic_experience = fd['experience']
+        if 'basic_role' not in st.session_state and 'current_role' in fd:
+            st.session_state.basic_role = fd['current_role']
+        if 'basic_custom_role' not in st.session_state and 'custom_role' in fd:
+            st.session_state.basic_custom_role = fd['custom_role']
         
         full_name = st.text_input("Full Name *", key="basic_name", placeholder="John Doe")
         email = st.text_input("Email *", key="basic_email", placeholder="john@example.com")
@@ -131,6 +156,17 @@ def render_create_profile_page():
                 for err in errors:
                     st.error(err)
             else:
+                # Store form data before navigation (these keys get cleared when widget not rendered)
+                st.session_state.form_data['full_name'] = full_name
+                st.session_state.form_data['email'] = email
+                st.session_state.form_data['linkedin_url'] = linkedin_url
+                st.session_state.form_data['phone_number'] = phone_number
+                st.session_state.form_data['country_code'] = country_code
+                st.session_state.form_data['current_company'] = current_company
+                st.session_state.form_data['experience'] = experience
+                st.session_state.form_data['current_role'] = current_role
+                st.session_state.form_data['custom_role'] = custom_role
+                
                 st.session_state.create_tab = 1
                 st.rerun()
     
@@ -276,16 +312,17 @@ def render_create_profile_page():
 
 def _submit_profile():
     """Submit the profile and navigate to matches."""
-    # Get all form values from session state
-    full_name = st.session_state.get('basic_name', '')
-    email = st.session_state.get('basic_email', '')
-    linkedin_url = st.session_state.get('basic_linkedin', '')
-    phone_number = st.session_state.get('basic_phone', '')
-    country_code = st.session_state.get('phone_country', '+91 (India)')
-    current_company = st.session_state.get('basic_company', '')
-    experience = st.session_state.get('basic_experience', '')
-    current_role = st.session_state.get('basic_role', '')
-    custom_role = st.session_state.get('basic_custom_role', '')
+    # Get all form values from stored form_data (persisted across tabs)
+    fd = st.session_state.get('form_data', {})
+    full_name = fd.get('full_name', '')
+    email = fd.get('email', '')
+    linkedin_url = fd.get('linkedin_url', '')
+    phone_number = fd.get('phone_number', '')
+    country_code = fd.get('country_code', '+91 (India)')
+    current_company = fd.get('current_company', '')
+    experience = fd.get('experience', '')
+    current_role = fd.get('current_role', '')
+    custom_role = fd.get('custom_role', '')
     
     # Final validation
     errors = []
@@ -358,6 +395,7 @@ def _submit_profile():
         st.toast("🎉 Profile created!", icon="✅")
         st.session_state.current_profile = result
         st.session_state.create_tab = 0  # Reset for next time
+        st.session_state.form_data = {}  # Clear form data
         st.session_state.page = 'my_profile'
         st.rerun()
     else:
