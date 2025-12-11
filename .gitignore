@@ -32,6 +32,10 @@ env/
 # Environment Variables
 .env
 
+# Streamlit secrets (local development only)
+ui/.streamlit/secrets.toml
+.streamlit/secrets.toml
+
 # IDE
 .vscode/
 .idea/
